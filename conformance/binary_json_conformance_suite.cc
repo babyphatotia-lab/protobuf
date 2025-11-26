@@ -33,6 +33,7 @@
 #include "conformance/conformance.pb.h"
 #include "conformance_test.h"
 #include "conformance/test_protos/test_messages_edition2023.pb.h"
+#include "conformance/test_protos/test_messages_edition_unstable.pb.h"
 #include "editions/golden/test_messages_proto2_editions.pb.h"
 #include "editions/golden/test_messages_proto3_editions.pb.h"
 #include "google/protobuf/json/json.h"
@@ -51,6 +52,7 @@ using google::protobuf::Descriptor;
 using google::protobuf::FieldDescriptor;
 using google::protobuf::internal::WireFormatLite;
 using google::protobuf::util::NewTypeResolverForDescriptorPool;
+using protobuf_test_messages::edition_unstable::TestAllTypesEditionUnstable;
 using protobuf_test_messages::editions::TestAllTypesEdition2023;
 using protobuf_test_messages::proto2::TestAllTypesProto2;
 using protobuf_test_messages::proto3::TestAllTypesProto3;

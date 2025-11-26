@@ -18,6 +18,7 @@
 #include "absl/strings/str_format.h"
 #include "conformance_test.h"
 #include "conformance/test_protos/test_messages_edition2023.pb.h"
+#include "conformance/test_protos/test_messages_edition_unstable.pb.h"
 #include "editions/golden/test_messages_proto2_editions.pb.h"
 #include "editions/golden/test_messages_proto3_editions.pb.h"
 #include "google/protobuf/test_messages_proto2.pb.h"
@@ -28,6 +29,7 @@ using conformance::ConformanceRequest;
 using conformance::ConformanceResponse;
 using conformance::TestStatus;
 using conformance::WireFormat;
+using protobuf_test_messages::edition_unstable::TestAllTypesEditionUnstable;
 using protobuf_test_messages::editions::TestAllTypesEdition2023;
 using protobuf_test_messages::proto2::TestAllTypesProto2;
 using protobuf_test_messages::proto2::UnknownToTestAllTypes;
@@ -130,6 +132,7 @@ void TextFormatConformanceTestSuite::RunSuiteImpl() {
     TextFormatConformanceTestSuiteImpl<TestAllTypesProto2Editions>(this);
     TextFormatConformanceTestSuiteImpl<TestAllTypesProto3Editions>(this);
     TextFormatConformanceTestSuiteImpl<TestAllTypesEdition2023>(this);
+    TextFormatConformanceTestSuiteImpl<TestAllTypesEditionUnstable>(this);
   }
 }
 
@@ -140,6 +143,10 @@ TextFormatConformanceTestSuiteImpl<MessageType>::
   // Flag control performance tests to keep them internal and opt-in only
   if (suite_.performance_) {
     if (MessageType::GetDescriptor()->name() == "TestAllTypesEdition2023") {
+      // There are no editions-sensitive performance tests.
+      return;
+    }
+    if (MessageType::GetDescriptor()->name() == "TestAllTypesEditionUnstable") {
       // There are no editions-sensitive performance tests.
       return;
     }
