@@ -157,14 +157,14 @@ std::string TextFormatExtensionsTest::static_proto_text_format_;
 TEST_F(TextFormatTest, Basic) {
   TestUtil::SetAllFields(&proto_);
   std::string actual_proto_text_format;
-  TextFormat::PrintToString(proto_, &actual_proto_text_format);
+  ASSERT_TRUE(TextFormat::PrintToString(proto_, &actual_proto_text_format));
   EXPECT_EQ(actual_proto_text_format, proto_text_format_);
 }
 
 TEST_F(TextFormatExtensionsTest, Extensions) {
   TestUtil::SetAllExtensions(&proto_);
   std::string actual_proto_text_format;
-  TextFormat::PrintToString(proto_, &actual_proto_text_format);
+  ASSERT_TRUE(TextFormat::PrintToString(proto_, &actual_proto_text_format));
   EXPECT_EQ(actual_proto_text_format, proto_text_format_);
 }
 
@@ -403,7 +403,7 @@ TEST_F(TextFormatTest, DelimitedPrintToString) {
   proto.mutable_nested()->mutable_notgrouplike()->set_a(7);
 
   std::string output;
-  TextFormat::PrintToString(proto, &output);
+  ASSERT_TRUE(TextFormat::PrintToString(proto, &output));
   EXPECT_EQ(output,
             "nested {\n  notgrouplike {\n    a: 7\n  }\n}\nGroupLike {\n  a: "
             "9\n}\nnotgrouplike {\n  b: 8\n}\n");
@@ -426,7 +426,7 @@ TEST_F(TextFormatTest, PrintUnknownFields) {
   unknown_fields->AddVarint(8, 3);
 
   std::string message_text;
-  TextFormat::PrintToString(message, &message_text);
+  ASSERT_TRUE(TextFormat::PrintToString(message, &message_text));
   EXPECT_EQ(absl::StrCat("5: 1\n"
                          "5: 0x00000002\n"
                          "5: 0x0000000000000003\n"
