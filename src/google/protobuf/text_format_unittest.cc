@@ -28,6 +28,7 @@
 #include "google/protobuf/testing/googletest.h"
 #include <gtest/gtest.h>
 #include "absl/log/absl_check.h"
+#include "absl/log/absl_log.h"
 #include "absl/log/die_if_null.h"
 #include "absl/log/scoped_mock_log.h"
 #include "absl/strings/cord.h"
@@ -56,10 +57,34 @@
 // Must be included last.
 #include "google/protobuf/port_def.inc"
 
+// ABSL_FLAG(std::string, any_name, "", "any name");
+
 namespace google {
 namespace protobuf {
 
 namespace internal {
+
+// class SimpleErrorCollector : public google::protobuf::io::ErrorCollector {
+//  public:
+//   void RecordError(int line, int column, absl::string_view message) override
+//   {
+//     errors_.push_back(absl::StrFormat("Error in line %d (column %d): %s",
+//     line,
+//                                       column, message));
+//   }
+
+//   void RecordWarning(int line, int column, absl::string_view message)
+//   override {
+//     errors_.push_back(absl::StrFormat("Warning in line %d (column %d): %s",
+//                                       line, column, message));
+//   }
+
+//   std::string str() const { return absl::StrJoin(errors_, "\n"); }
+
+//  private:
+//   std::vector<std::string> errors_;
+// };
+
 class UnsetFieldsMetadataTextFormatTestUtil {
  public:
   static const auto& GetRawIds(
@@ -2478,21 +2503,25 @@ TEST_F(TextFormatParserTest, ParseSkippedFieldWithAdditionalWhiteSpaces) {
   proto2_unittest::TestAllTypes proto;
   TextFormat::Parser parser;
   parser.AllowUnknownField(true);
-  EXPECT_TRUE(
-      parser.ParseFromString("optional_int32: 321\n"
-                             "unknown_field1   : \t 12345\n"
-                             "[somewhere.unknown_extension1]   {\n"
-                             "  unknown_field2 \t :   12345\n"
-                             "}\n"
-                             "[somewhere.unknown_extension2]    : \t {\n"
-                             "  unknown_field3     \t :   12345\n"
-                             "  [somewhere.unknown_extension3]    \t :   {\n"
-                             "    unknown_field4:   10\n"
-                             "  }\n"
-                             "  [somewhere.unknown_extension4] \t {\n"
-                             "  }\n"
-                             "}\n",
-                             &proto));
+  EXPECT_TRUE(parser.ParseFromString(
+      "optional_int32: 321\n"
+      "unknown_field1   : \t 12345\n"
+      "[somewhere.unknown_extension1]   {\n"
+      "  unknown_field2 \t :   12345\n"
+      "  unknown_any1 { [domain.com/1+-&!%2b/proto2_unittest.TestAllTypes] {\n"
+      "      unknown_field3: 12345\n"
+      "    }\n"
+      "  }\n"
+      "}\n"
+      "[somewhere.unknown_extension2]    : \t {\n"
+      "  unknown_field4     \t :   12345\n"
+      "  [somewhere.unknown_extension3]    \t :   {\n"
+      "    unknown_field5:   10\n"
+      "  }\n"
+      "  [somewhere.unknown_extension4] \t {\n"
+      "  }\n"
+      "}\n",
+      &proto));
   std::string text;
   TextFormat::Printer printer;
   ASSERT_TRUE(printer.PrintToString(proto, &text));
